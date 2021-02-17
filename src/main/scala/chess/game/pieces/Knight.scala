@@ -21,8 +21,8 @@ class Knight(player: Player) extends Piece(player) {
    * @return <code>true</code> if is a knight movement, <code>false</code> if not
    */
   private def isKnightMovement(move: Move): Boolean = {
-    (Math.abs(move.diffRow) == 1 && Math.abs(move.diffCol) == 2) ||
-      (Math.abs(move.diffRow) == 2 && Math.abs(move.diffCol) == 1)
+    val diff = (Math.abs(move.diffRow), Math.abs(move.diffCol))
+    diff == (1, 2) || diff == (2, 1)
   }
 
   /**

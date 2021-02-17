@@ -21,9 +21,8 @@ class King(player: Player) extends Piece(player) {
    * @return <code>true</code> if is a king movement, <code>false</code> if not
    */
   private def isKingMovement(move: Move): Boolean = {
-    (Math.abs(move.diffRow) == 1 && move.diffCol == 0) ||
-      (move.diffRow == 0 && Math.abs(move.diffCol) == 1) ||
-      (Math.abs(move.diffRow) == 1 && Math.abs(move.diffCol) == 1)
+    val diff = (Math.abs(move.diffRow), Math.abs(move.diffCol))
+    diff == (1, 0) || diff == (0, 1) || diff == (1, 1)
   }
 
   /**
