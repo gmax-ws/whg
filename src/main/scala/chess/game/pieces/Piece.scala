@@ -37,8 +37,8 @@ abstract class Piece(val player: Player) {
    * Check if is a valid target. A valid target means that a piece is found
    * at destination cell (To) and belong to opponent player.
    *
-   * @param table Chess Table instance
-   * @param move  Movement coordinates
+   * @param table        Chess Table instance
+   * @param move         Movement coordinates
    * @param isEmptyValid Is empty square considered valid, default <code>true</code>
    * @return <code>true</code> if is a valid target, <code>false</code> otherwise
    */
@@ -79,17 +79,13 @@ abstract class Piece(val player: Player) {
       val end = Math.max(move.colFrom, move.colTo)
 
       // adjacent
-      if (beg == end) {
-        true
-      } else {
-        for (col <- beg until end) {
-          if (!table.isVacant(move.rowFrom, col)) {
-            logger.debug(s"HORIZONTAL vacant cells test failed ${move.rowFrom}:$col")
-            return false
-          }
+      for (col <- beg until end if beg != end) {
+        if (!table.isVacant(move.rowFrom, col)) {
+          logger.debug(s"HORIZONTAL vacant cells test failed ${move.rowFrom}:$col")
+          return false
         }
-        true
       }
+      true
     }
 
     /**
@@ -102,17 +98,13 @@ abstract class Piece(val player: Player) {
       val end = Math.max(move.rowFrom, move.rowTo)
 
       // adjacent
-      if (beg == end) {
-        true
-      } else {
-        for (row <- beg until end) {
-          if (!table.isVacant(row, move.colFrom)) {
-            logger.debug(s"VERTICAL vacant cells test failed $row:${move.colFrom}")
-            return false
-          }
+      for (row <- beg until end if beg != end) {
+        if (!table.isVacant(row, move.colFrom)) {
+          logger.debug(s"VERTICAL vacant cells test failed $row:${move.colFrom}")
+          return false
         }
-        true
       }
+      true
     }
 
     /**
@@ -124,28 +116,22 @@ abstract class Piece(val player: Player) {
       val rBeg = Math.min(move.rowFrom, move.rowTo) + 1
       val rEnd = Math.max(move.rowFrom, move.rowTo)
 
-      // adjacent
-      if (rBeg == rEnd) {
-        true
-      } else {
+      val cBeg = Math.min(move.colFrom, move.colTo) + 1
+      val cEnd = Math.max(move.colFrom, move.colTo)
 
-        val cBeg = Math.min(move.colFrom, move.colTo) + 1
-        val cEnd = Math.max(move.colFrom, move.colTo)
+      val colStep = if (move.diffCol < 0) 1 else -1
 
-        val colStep = if (move.diffCol < 0) 1 else -1
+      val rows = for (r <- rBeg until rEnd) yield r
+      val cols = for (c <- cBeg until cEnd by colStep) yield c
+      val cells = rows zip cols
 
-        val rows = for (r <- rBeg until rEnd) yield r
-        val cols = for (c <- cBeg until cEnd by colStep) yield c
-        val cells = rows zip cols
-
-        for ((row, col) <- cells) {
-          if (!table.isVacant(row, col)) {
-            logger.debug(s"DIAGONAL vacant cells test failed $row:$col")
-            return false
-          }
+      for ((row, col) <- cells if rBeg != rEnd) {
+        if (!table.isVacant(row, col)) {
+          logger.debug(s"DIAGONAL vacant cells test failed $row:$col")
+          return false
         }
-        true
       }
+      true
     }
 
     if (isHorizontalMovement(move)) {
